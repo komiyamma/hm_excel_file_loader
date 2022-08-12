@@ -1,9 +1,9 @@
 ﻿/* 
- * HmExcelFileLoader.mac v 1.1.0.3
- * Copyright (c) 2017-2019 Akitsugu Komiyama
+ * HmExcelFileLoader.mac v 1.1.1.1
+ * Copyright (c) 2017-2022 Akitsugu Komiyama
  * under the Apache License Version 2.0
  *
- * 秀丸 v8.66以上
+ * 秀丸 v8.73以上
  * hmV8 1.4.7.5以上。
  * Microsoft Excelアプリケーションが、PCに「入っていなくても」問題なく動作します。
  */
@@ -49,10 +49,15 @@ function Main() {
         return;
     }
     let controller = new HmExcelFileLoaderController(xlsFileFullPath);
-    // 秀丸のCSVモードやTSVモードはセル中の改行に対応していないため、セルの値を加工する。
+    // 秀丸のCSVモードやTSVモードは8.94以降なら、マクロで自動で特殊改行に出来るため、それを利用する
+    // それ未満のバージョンだと、自動では変換できないので、セルの値を加工する。
     // どのようにカスタムしたいかはユーザーに選択の自由があったほうが良いので、このように注入可能としておく。
     // 改行コード→[[改行]]に、" "で囲む。
-    controller.OverrideCellNormalizeAlgorithm((cell) => cell.replace(/\n/g, "[[改行]]"));
+    if (hm.version >= 894) {
+        controller.OverrideCellNormalizeAlgorithm( (cell) => { cell = cell.replace(/"/g, "\\\""); return "\"" + cell + "\""; } );
+    } else {
+        controller.OverrideCellNormalizeAlgorithm((cell) => cell.replace(/\n/g, "[[改行]]"));
+    }
     // 変換
     let tsvFileNameList = controller.Convert();
     // 変換したファイル名を、秀丸マクロスコープへと伝達しておく。
@@ -245,6 +250,10 @@ OpenTsvFileList:
         openfile $$tsvfilename, noaddhist;
         // TSVモードにする
         config "xTabMode:0x0001";
+
+        if (version >= 894) {
+            convert_return_in_cell 0;
+        }
 
         ##ix = ##ix + 1;
     }
