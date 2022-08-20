@@ -49,6 +49,7 @@ function Main() {
         return;
     }
     let controller = new HmExcelFileLoaderController(xlsFileFullPath);
+
     // 秀丸のCSVモードやTSVモードは8.94以降なら、マクロで自動で特殊改行に出来るため、それを利用する
     // それ未満のバージョンだと、自動では変換できないので、セルの値を加工する。
     // どのようにカスタムしたいかはユーザーに選択の自由があったほうが良いので、このように注入可能としておく。
