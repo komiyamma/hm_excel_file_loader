@@ -1,6 +1,6 @@
 ﻿/* 
- * HmExcelFileLoader.mac v 1.1.1.1
- * Copyright (c) 2017-2022 Akitsugu Komiyama
+ * HmExcelFileLoader.mac v 1.1.1.2
+ * Copyright (c) 2017-2025 Akitsugu Komiyama
  * under the Apache License Version 2.0
  *
  * 秀丸 v8.73以上
@@ -10,7 +10,7 @@
 
 
 // 「ファイルを開いた直後の自動起動マクロ」として実行されている場合、第１引数を取得する。
-if (event == 1) {
+if (argcount > 0) {
     $argXlsFileFullPath = getarg(0);
 }
 
